@@ -18,5 +18,5 @@ cp /path/to/file/of/interest.lif data/raw/
 Run the analysis.
 
 ```
-python scripts/find_plasmoesmata.py data/raw/interest.lif --series=0
+python scripts/find_plasmodesmata.py data/raw/interest.lif --series=0
 ```
