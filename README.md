@@ -15,6 +15,19 @@ mkdir -p data/raw
 cp /path/to/file/of/interest.lif data/raw/
 ```
 
+Install the dependencies.
+
+```
+pip install numpy
+pip install scipy
+pip install scikit-image
+pip install jicbioimage.transform
+```
+
+See also the
+[jicbioimage installation notes](http://jicbioimage.readthedocs.org/en/latest/installation_notes.html)
+for further dependencies.
+
 Run the analysis.
 
 ```
