@@ -4,6 +4,7 @@ import os.path
 import argparse
 
 import numpy as np
+import scipy.misc
 import skimage.measure
 
 from jicbioimage.core.io import FileBackend
@@ -48,12 +49,24 @@ def connected_components(image, neighbors=8, background=None):
 @transformation
 @dtype_contract(input_dtype=bool, output_dtype=bool)
 def remove_large_objects(image, max_size):
-    """Remove objects larger than max_size."""
+    """Remove objects larger than max_size.
+
+    This function removes more than the large object identified.
+    It takes the convex hull of the large object and then performs
+    30 rounds of dilation.
+    """
     segmented_image = connected_components(image)
+    ignored = np.zeros(image.shape, dtype=np.uint8)
     for i in segmented_image.identifiers:
         region = segmented_image.region_by_identifier(i)
         if region.area > max_size:
-            segmented_image[region.index_arrays] = 0
+            to_remove = region
+            to_remove = region.convex_hull
+            to_remove = to_remove.dilate(30)
+            segmented_image[to_remove.index_arrays] = 0
+            ignored[to_remove.index_arrays] = 255
+    
+    scipy.misc.imsave("ignored.png", ignored)
     return segmented_image.astype(bool)
 
 
