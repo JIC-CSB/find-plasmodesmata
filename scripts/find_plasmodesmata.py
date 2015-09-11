@@ -64,12 +64,51 @@ def remove_large_objects(image, max_size):
             to_remove = region.convex_hull
             to_remove = to_remove.dilate(30)
             segmented_image[to_remove.index_arrays] = 0
-            ignored[to_remove.index_arrays] = 255
+            ignored[to_remove.index_arrays] = 1
     
-    scipy.misc.imsave("ignored.png", ignored)
+    print("Number of pixels        : {}".format(segmented_image.size))
+    print("Number of ignored pixels: {}".format(np.sum(ignored)))
+    scipy.misc.imsave("ignored.png", normalise(ignored))
     return segmented_image.astype(bool)
 
+def count_spots(image):
+    """Return the number of spots identified."""
+    segmented_image = connected_components(image)
+    print("Number of spots         : {}".format(segmented_image.number_of_segments))
+    return segmented_image.number_of_segments
 
+def write_csv(image, max_intensity, fname):
+    """Write out a csv file with information about each spot."""
+    segmented_image = connected_components(image)
+    spot_properties = skimage.measure.regionprops(segmented_image, max_intensity)
+    print len(spot_properties)
+    header = [
+        "id",
+        "centroid_row",
+        "centroid_col",
+        "area",
+        "max_intensity",
+        "mean_intensity",
+        "major_axis_length",
+        "minor_axis_length",
+    ]
+    row = "{id:d},{centroid_row:.0f},{centroid_col:.0f},{area:.0f},{max_intensity},{mean_intensity},{major_axis_length:.2f},{minor_axis_length:.2f}\n"
+    with open(fname, "w") as fh:
+        fh.write("{}\n".format(",".join(header)))
+        for i, p in enumerate(spot_properties):
+            data = dict(
+                id=i,
+                centroid_row=round(p.centroid[0], 0),
+                centroid_col=round(p.centroid[1], 0),
+                area=p.area,
+                max_intensity=p.max_intensity,
+                mean_intensity=p.mean_intensity,
+                major_axis_length=p.major_axis_length,
+                minor_axis_length=p.minor_axis_length,
+            )
+            fh.write(row.format(**data))
+    
+    
 def create_annotated_image(image, max_intensity):
     """Write an annotated image to disk."""
     segmented_image = connected_components(image)
@@ -99,6 +138,8 @@ def find_plasmoesmata(zstack, max_size, min_size):
     im = remove_large_objects(im, max_size=max_size)
     im = remove_small_objects(im, min_size=min_size)
 
+    num_spots = count_spots(im)
+    write_csv(im, max_intensity, "output.csv")
     create_annotated_image(im, max_intensity)
 
     return connected_components(im)
