@@ -81,7 +81,6 @@ def write_csv(image, max_intensity, fname):
     """Write out a csv file with information about each spot."""
     segmented_image = connected_components(image)
     spot_properties = skimage.measure.regionprops(segmented_image, max_intensity)
-    print len(spot_properties)
     header = [
         "id",
         "centroid_row",
