@@ -2,6 +2,7 @@
 
 import os.path
 import argparse
+import logging
 
 import numpy as np
 import scipy.misc
@@ -22,7 +23,16 @@ from jicbioimage.transform import (
     remove_small_objects,
 )
 
+__version__ = "0.5.0"
+
 HERE = os.path.dirname(os.path.realpath(__file__))
+
+# Setup logging with a stream handler.
+logger = logging.getLogger(os.path.basename(__file__))
+logger.setLevel(logging.DEBUG)
+ch = logging.StreamHandler()
+ch.setLevel(logging.DEBUG)
+logger.addHandler(ch)
 
 
 def get_microscopy_collection(input_file):
@@ -66,15 +76,15 @@ def remove_large_objects(image, max_size):
             segmented_image[to_remove.index_arrays] = 0
             ignored[to_remove.index_arrays] = 1
     
-    print("Number of pixels        : {}".format(segmented_image.size))
-    print("Number of ignored pixels: {}".format(np.sum(ignored)))
+    logger.info("Number of pixels        : {}".format(segmented_image.size))
+    logger.info("Number of ignored pixels: {}".format(np.sum(ignored)))
     scipy.misc.imsave(os.path.join(AutoName.directory, "ignored.png"), normalise(ignored))
     return segmented_image.astype(bool)
 
 def count_spots(image):
     """Return the number of spots identified."""
     segmented_image = connected_components(image)
-    print("Number of spots         : {}".format(segmented_image.number_of_segments))
+    logger.info("Number of spots         : {}".format(segmented_image.number_of_segments))
     return segmented_image.number_of_segments
 
 def write_csv(image, max_intensity, fname):
@@ -162,6 +172,15 @@ def main():
         parser.error("No such microscopy file: {}".format(args.input_file))
 
     AutoName.directory = args.output_dir
+
+    # Create file handle logger.
+    fh = logging.FileHandler(os.path.join(AutoName.directory, "log"), mode="w")
+    fh.setLevel(logging.DEBUG)
+    formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+    fh.setFormatter(formatter)
+    logger.addHandler(fh)
+    
+    logger.info("Script version          : {}".format(__version__))
 
     microscopy_collection = get_microscopy_collection(args.input_file)
     zstack = microscopy_collection.zstack_array(s=args.series)
