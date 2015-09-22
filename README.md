@@ -1,5 +1,41 @@
 # README
 
+## Installation notes
+
+## Dependencies
+
+- [OpenMicroscopy bftools](http://www.openmicroscopy.org/site/support/bio-formats5.1/users/comlinetools/)
+- [FreeImage](http://freeimage.sourceforge.net/download.html)
+
+Notes on how to install ``bftools`` and ``FreeImage`` can be found in the
+[jicbioimage installation notes](http://jicbioimage.readthedocs.org/en/latest/installation_notes.html)
+
+## Windows
+
+Install the [Anaconda Python distribution](http://continuum.io/downloads).
+
+Setup a virtual environment named ``find_plasmodesmata_env`` and install the
+scientific Python package dependencies.
+
+```
+conda create –n find_plasmodesmata_env python=2.7 numpy scipy scikit-image
+```
+
+Activate the virtual environment.
+
+```
+activate find_plasmodesmata_env
+```
+
+Install the ``jicbioimage`` dependencies.
+
+```
+pip install jicbioimage.transform
+```
+
+
+## Linux
+
 Clone the project from githq and go into it.
 
 ```
@@ -24,9 +60,14 @@ pip install scikit-image
 pip install jicbioimage.transform
 ```
 
-See also the
-[jicbioimage installation notes](http://jicbioimage.readthedocs.org/en/latest/installation_notes.html)
-for further dependencies.
+## Data analysis
+
+On Windows remember to activate the virtual environment when you open a new
+command prompt.
+
+```
+activate find_plasmodesmata_env
+```
 
 Run the analysis.
 
