@@ -96,20 +96,29 @@ def write_csv(image, max_intensity, fname):
         "centroid_row",
         "centroid_col",
         "area",
+        "sum_intensity",
         "max_intensity",
         "mean_intensity",
         "major_axis_length",
         "minor_axis_length",
     ]
-    row = "{id:d},{centroid_row:.0f},{centroid_col:.0f},{area:.0f},{max_intensity},{mean_intensity},{major_axis_length:.2f},{minor_axis_length:.2f}\n"
+    row = "{id:d},{centroid_row:.0f},{centroid_col:.0f},{area:.0f},{sum_intensity},{max_intensity},{mean_intensity},{major_axis_length:.2f},{minor_axis_length:.2f}\n"
     with open(fname, "w") as fh:
         fh.write("{}\n".format(",".join(header)))
         for i, p in enumerate(spot_properties):
+
+            # Make sure that we are picking out the correct region from the
+            # segmented image.
+            assert segmented_image.region_by_identifier(i+1).area == p.area
+            assert np.max(max_intensity[np.where(segmented_image.region_by_identifier(i+1))]) == p.max_intensity
+
+            sum_intensity = np.sum(max_intensity[np.where(segmented_image.region_by_identifier(i+1))])
             data = dict(
                 id=i,
                 centroid_row=round(p.centroid[0], 0),
                 centroid_col=round(p.centroid[1], 0),
                 area=p.area,
+                sum_intensity=sum_intensity,
                 max_intensity=p.max_intensity,
                 mean_intensity=p.mean_intensity,
                 major_axis_length=p.major_axis_length,
