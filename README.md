@@ -43,14 +43,6 @@ git clone git@githq.nbi.ac.uk:rg-matthew-hartley/find-plasmodesmata.git
 cd find-plasmodesmata
 ```
 
-Create a ``data/raw`` directory and place the microscopy file of interest
-there.
-
-```
-mkdir -p data/raw
-cp /path/to/file/of/interest.lif data/raw/
-```
-
 Install the dependencies.
 
 ```
@@ -72,5 +64,5 @@ activate find_plasmodesmata_env
 Run the analysis.
 
 ```
-python scripts/find_plasmodesmata.py data/raw/interest.lif --series=0
+python scripts/find_plasmodesmata.py /path/to/raw/file/of/interest.lif --series=0 output_directory
 ```

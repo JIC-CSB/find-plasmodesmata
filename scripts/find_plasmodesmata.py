@@ -7,7 +7,7 @@ import numpy as np
 import scipy.misc
 import skimage.measure
 
-from jicbioimage.core.io import FileBackend
+from jicbioimage.core.io import FileBackend, AutoName
 from jicbioimage.core.image import DataManager, SegmentedImage, Image
 from jicbioimage.core.transform import transformation
 from jicbioimage.core.util.array import (
@@ -29,7 +29,7 @@ def get_microscopy_collection(input_file):
     """Return microscopy collection from input file."""
     data_dir = os.path.abspath(os.path.join(HERE, "..", "data"))
     if not os.path.isdir(data_dir):
-        raise(OSError("Data directory does not exist: {}".format(data_dir)))
+        os.mkdir(data_dir)
     backend_dir = os.path.join(data_dir, 'unpacked')
     file_backend = FileBackend(backend_dir)
     data_manager = DataManager(file_backend)
@@ -68,7 +68,7 @@ def remove_large_objects(image, max_size):
     
     print("Number of pixels        : {}".format(segmented_image.size))
     print("Number of ignored pixels: {}".format(np.sum(ignored)))
-    scipy.misc.imsave("ignored.png", normalise(ignored))
+    scipy.misc.imsave(os.path.join(AutoName.directory, "ignored.png"), normalise(ignored))
     return segmented_image.astype(bool)
 
 def count_spots(image):
@@ -117,7 +117,7 @@ def create_annotated_image(image, max_intensity):
     for i in segmented_image.identifiers:
         border = segmented_image.region_by_identifier(i).dilate(1).border
         annotated[border.index_arrays] = _pretty_color()
-    with open("annotated.png", "wb") as fh:
+    with open(os.path.join(AutoName.directory, "annotated.png"), "wb") as fh:
         fh.write(annotated.png())
 
 
@@ -138,7 +138,7 @@ def find_plasmoesmata(zstack, max_size, min_size):
     im = remove_small_objects(im, min_size=min_size)
 
     num_spots = count_spots(im)
-    write_csv(im, max_intensity, "output.csv")
+    write_csv(im, max_intensity, os.path.join(AutoName.directory, "output.csv"))
     create_annotated_image(im, max_intensity)
 
     return connected_components(im)
@@ -149,13 +149,19 @@ def main():
     parser.add_argument("input_file", help="path to raw microscopy data")
     parser.add_argument("series", type=int,
         help="zero based index of microscopy image series to analyse")
+    parser.add_argument("output_dir", help="output directory")
     parser.add_argument("-l", "--max_size",
         default=100, type=int, help="maximum number of pixels (default=100)")
     parser.add_argument("-s", "--min_size",
         default=2, type=int, help="minimum number of pixels (default=2)")
     args = parser.parse_args()
+
+    if not os.path.isdir(args.output_dir):
+        os.mkdir(args.output_dir)
     if not os.path.isfile(args.input_file):
         parser.error("No such microscopy file: {}".format(args.input_file))
+
+    AutoName.directory = args.output_dir
 
     microscopy_collection = get_microscopy_collection(args.input_file)
     zstack = microscopy_collection.zstack_array(s=args.series)
