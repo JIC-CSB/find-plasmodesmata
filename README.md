@@ -33,6 +33,10 @@ Install the ``jicbioimage`` dependencies.
 pip install jicbioimage.transform
 ```
 
+Download the
+[find_plasmodesmata](https://githq.nbi.ac.uk/rg-matthew-hartley/find-plasmodesmata)
+project from githq and go into it.
+
 
 ## Linux
 
