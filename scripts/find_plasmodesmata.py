@@ -47,12 +47,20 @@ def get_microscopy_collection(input_file):
     return microscopy_collection
 
 
-def connected_components(image, neighbors=8, background=None):
+def connected_components(image, neighbors=8, background=0):
     """Return a segmented image."""
     connected_components, n_cc = skimage.measure.label(image,
                                                        neighbors=8,
                                                        background=background,
                                                        return_num=True)
+
+    # Hack to work arounds skimage.measure.label behaviour pre version 0.12.
+    # Pre version 0.12 the background in skimage was labeled -1 and the first component was labelled with 0.
+    # The jicbioimage.core.image.SegmentedImage assumes that the background is labelled 0.
+    if np.min(connected_components) == -1:
+        connected_components[np.where(connected_components == 0)] = np.max(connected_components) +1
+        connected_components[np.where(connected_components == -1)] = 0
+
     return connected_components.view(SegmentedImage)
 
 
