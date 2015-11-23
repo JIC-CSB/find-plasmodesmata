@@ -23,7 +23,7 @@ from jicbioimage.transform import (
     remove_small_objects,
 )
 
-__version__ = "0.5.0"
+__version__ = "0.5.1"
 
 HERE = os.path.dirname(os.path.realpath(__file__))
 
