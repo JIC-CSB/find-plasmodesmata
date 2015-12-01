@@ -148,7 +148,7 @@ def create_annotated_image(image, max_intensity):
         fh.write(annotated.png())
 
 
-def find_plasmoesmata(zstack, max_size, min_size):
+def find_plasmodesmata(zstack, max_size, min_size):
     """Return segmented image.
 
     :param zstack: numpy.ndarray
@@ -201,7 +201,7 @@ def main():
 
     microscopy_collection = get_microscopy_collection(args.input_file)
     zstack = microscopy_collection.zstack_array(s=args.series)
-    find_plasmoesmata(zstack, args.max_size, args.min_size)
+    find_plasmodesmata(zstack, args.max_size, args.min_size)
 
 if __name__ == "__main__":
     main()
