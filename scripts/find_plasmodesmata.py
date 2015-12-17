@@ -11,11 +11,8 @@ import skimage.measure
 from jicbioimage.core.io import FileBackend, AutoName
 from jicbioimage.core.image import DataManager, SegmentedImage, Image
 from jicbioimage.core.transform import transformation
-from jicbioimage.core.util.array import (
-    dtype_contract,
-    normalise,
-    _pretty_color
-)
+from jicbioimage.core.util.array import dtype_contract, normalise
+from jicbioimage.core.util.color import pretty_color
 
 from jicbioimage.transform import (
     max_intensity_projection,
@@ -143,7 +140,7 @@ def create_annotated_image(image, max_intensity):
     annotated = Image.from_array(rgb_intensity)
     for i in segmented_image.identifiers:
         border = segmented_image.region_by_identifier(i).dilate(1).border
-        annotated[border.index_arrays] = _pretty_color()
+        annotated[border.index_arrays] = pretty_color(i)
     with open(os.path.join(AutoName.directory, "annotated.png"), "wb") as fh:
         fh.write(annotated.png())
 
