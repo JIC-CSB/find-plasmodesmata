@@ -2,6 +2,9 @@
 
 Segmentation of the image is done using an absolute threshold.
 
+Small unwanted regions, such as background pixels, remaining from the
+thresholding are filtered out based on a minimal requirement of a voxel size.
+
 Large unwanted regions, such as stomata, remaining from the thresholding
 are filtered out based on a maximum allowed voxel size.
 
@@ -48,10 +51,22 @@ def segment3D(microscopy_collection, series, threshold):
 
 
 def filter_large(segmentation3D, max_voxel):
+    """Remove large regions."""
     removed = segmentation3D.copy()
     for i in segmentation3D.identifiers:
         region = segmentation3D.region_by_identifier(i)
         if region.area > max_voxel:
+            segmentation3D[region] = 0
+        else:
+            removed[region] = 0
+    return segmentation3D, removed
+
+def filter_small(segmentation3D, min_voxel):
+    """Remove small regions."""
+    removed = segmentation3D.copy()
+    for i in segmentation3D.identifiers:
+        region = segmentation3D.region_by_identifier(i)
+        if region.area < min_voxel:
             segmentation3D[region] = 0
         else:
             removed[region] = 0
@@ -94,7 +109,7 @@ def write_csv(segmentation3D, intensity, fname):
 
 
 def plasmodesmata_analysis(microscopy_collection, series, threshold,
-                           max_voxel):
+                           min_voxel, max_voxel):
     """Analyse the plasmodesmata in a 3D image.
 
     Segmentation of the image is done using an absolute threshold.
@@ -108,15 +123,28 @@ def plasmodesmata_analysis(microscopy_collection, series, threshold,
     segmentation = segment3D(microscopy_collection, series, threshold)
     AutoWrite.on = True
 
-    segmentation, removed = filter_large(segmentation, max_voxel)
+    # Filter out small and large regions.
+    segmentation, small_removed = filter_small(segmentation, min_voxel)
+    segmentation, large_removed = filter_large(segmentation, max_voxel)
 
+    # Create annotated images.
     annotate3D(microscopy_collection, series, segmentation)
-    AutoName.namespace = "removed."
-    annotate3D(microscopy_collection, series, removed)
+    AutoName.namespace = ".small.removed."
+    annotate3D(microscopy_collection, series, small_removed)
+    AutoName.namespace = ".large.removed."
+    annotate3D(microscopy_collection, series, large_removed)
 
-    seg_csv_fn = os.path.join(AutoName.directory, "plasmodesmata.csv")
+
+    # Write out data to CSV files.
+    csv_fn = os.path.join(AutoName.directory, "plasmodesmata.csv")
     write_csv(segmentation, microscopy_collection.zstack_array(s=series),
-              seg_csv_fn)
+              csv_fn)
+    csv_fn = os.path.join(AutoName.directory, "small.removed.csv")
+    write_csv(small_removed, microscopy_collection.zstack_array(s=series),
+              csv_fn)
+    csv_fn = os.path.join(AutoName.directory, "large.removed.csv")
+    write_csv(large_removed, microscopy_collection.zstack_array(s=series),
+              csv_fn)
 
 
 def main():
@@ -128,6 +156,8 @@ def main():
     parser.add_argument("-t", "--threshold",
                         default=15000, type=int,
                         help="abs threshold (default=20000)")
+    parser.add_argument("--min-voxel", default=2, type=int,
+                        help="Minimum voxel volume (default=2)")
     parser.add_argument("--max-voxel", default=50, type=int,
                         help="Maximum voxel volume (default=50)")
     args = parser.parse_args()
@@ -141,7 +171,7 @@ def main():
 
     microscopy_collection = get_microscopy_collection(args.input_file)
     plasmodesmata_analysis(microscopy_collection, args.series, args.threshold,
-                           args.max_voxel)
+                           args.min_voxel, args.max_voxel)
 
 
 if __name__ == "__main__":
