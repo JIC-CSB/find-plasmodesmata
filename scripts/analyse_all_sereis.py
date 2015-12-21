@@ -7,7 +7,7 @@ import logging
 
 from jicbioimage.core.io import AutoName
 
-from analyse_plasmodesmata import (
+from plasmodesmata_analysis import (
     get_microscopy_collection,
     plasmodesmata_analysis,
     __version__
