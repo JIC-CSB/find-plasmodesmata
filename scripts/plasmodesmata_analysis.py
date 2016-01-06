@@ -170,7 +170,7 @@ def main():
     parser.add_argument("output_dir", help="output directory")
     parser.add_argument("-t", "--threshold",
                         default=15000, type=int,
-                        help="abs threshold (default=20000)")
+                        help="abs threshold (default=15000)")
     parser.add_argument("--min-voxel", default=2, type=int,
                         help="Minimum voxel volume (default=2)")
     parser.add_argument("--max-voxel", default=50, type=int,
