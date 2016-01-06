@@ -143,6 +143,7 @@ def plasmodesmata_analysis(microscopy_collection, series, threshold,
     segmentation, large_removed = filter_large(segmentation, max_voxel)
 
     # Create annotated images.
+    AutoName.namespace = ""
     annotate3D(microscopy_collection, series, segmentation)
     AutoName.namespace = ".small.removed."
     annotate3D(microscopy_collection, series, small_removed)
