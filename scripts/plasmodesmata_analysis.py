@@ -27,7 +27,7 @@ from jicbioimage.illustrate import AnnotatedImage
 
 __version__ = "0.6.1"
 
-AutoName.prefix_format = "{:03d}_"
+AutoWrite.on = False
 HERE = os.path.dirname(os.path.realpath(__file__))
 
 # Suppress spurious scikit-image warnings.
@@ -100,12 +100,16 @@ def annotate(image, segmentation):
     return annotation
 
 
-def annotate3D(microscopy_collection, series, segmentation3D):
+def annotate3D(microscopy_collection, series, segmentation3D, name):
     for z in microscopy_collection.zslices(series):
         image = microscopy_collection.image(s=series, z=z)
         zslice = segmentation3D[:, :, z]
         segmentation = SegmentedImage.from_array(zslice)
-        annotate(image, segmentation)
+        annotation = annotate(image, segmentation)
+        fname = "z{:03d}_{}.png".format(z, name)
+        fpath = os.path.join(AutoName.directory, fname)
+        with open(fpath, "wb") as fh:
+            fh.write(annotation.png())
 
 
 def write_csv(segmentation3D, intensity, fname):
@@ -132,23 +136,16 @@ def plasmodesmata_analysis(microscopy_collection, series, threshold,
     Large unwanted regions, such as stomata, remaining from the thresholding
     are filtered out based on a maximum allowed voxel size.
     """
-    # Need to turn off auto-writing otherwise the connected_components
-    # transform fails when trying to write a 3D array to disk as an image.
-    AutoWrite.on = False
     segmentation = segment3D(microscopy_collection, series, threshold)
-    AutoWrite.on = True
 
     # Filter out small and large regions.
     segmentation, small_removed = filter_small(segmentation, min_voxel)
     segmentation, large_removed = filter_large(segmentation, max_voxel)
 
     # Create annotated images.
-    AutoName.namespace = ""
-    annotate3D(microscopy_collection, series, segmentation)
-    AutoName.namespace = ".small.removed."
-    annotate3D(microscopy_collection, series, small_removed)
-    AutoName.namespace = ".large.removed."
-    annotate3D(microscopy_collection, series, large_removed)
+    annotate3D(microscopy_collection, series, segmentation, "plasmodesmata")
+    annotate3D(microscopy_collection, series, small_removed, "small_removed")
+    annotate3D(microscopy_collection, series, large_removed, "large_removed")
 
     # Write out data to CSV files.
     csv_fn = os.path.join(AutoName.directory, "plasmodesmata.csv")
