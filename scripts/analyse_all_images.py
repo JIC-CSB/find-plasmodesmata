@@ -31,7 +31,7 @@ def analyse_dir(args):
             os.mkdir(specific_out_dir)
 
         fpath = os.path.join(args.input_dir, fname)
-        microscopy_collection = get_microscopy_collection(fname)
+        microscopy_collection = get_microscopy_collection(fpath)
         analyse_all(microscopy_collection, specific_out_dir, args.threshold,
                     args.min_voxel, args.max_voxel)
 
