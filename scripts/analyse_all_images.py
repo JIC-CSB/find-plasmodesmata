@@ -25,7 +25,10 @@ def analyse_dir(args):
             continue
         logger.info("Analysing image: {}".format(fname))
 
-        dir_name = fname.split(".")[0]
+        def get_dir_name(fname):
+            no_suffix_list = fname.split(".")[0:-1]
+            return ".".join(no_suffix_list)
+        dir_name = get_dir_name(fname)
         specific_out_dir = os.path.join(args.output_dir, dir_name)
         if not os.path.isdir(specific_out_dir):
             os.mkdir(specific_out_dir)
