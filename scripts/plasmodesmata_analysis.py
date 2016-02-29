@@ -16,12 +16,11 @@ import warnings
 
 import numpy as np
 
-from jicbioimage.core.image import DataManager, SegmentedImage
 from jicbioimage.core.transform import transformation
-from jicbioimage.core.io import FileBackend, AutoName, AutoWrite
+from jicbioimage.core.io import DataManager, FileBackend, AutoName, AutoWrite
 from jicbioimage.core.util.array import normalise
 from jicbioimage.core.util.color import pretty_color
-from jicbioimage.segment import connected_components
+from jicbioimage.segment import SegmentedImage, connected_components
 from jicbioimage.illustrate import AnnotatedImage
 
 
