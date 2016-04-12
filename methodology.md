@@ -2,35 +2,39 @@
 
 ## Image analysis
 
-The image analysis protocol segmented the confocal images into
-three-dimensional objects. Unusually small and large objects were then filtered
-out. A comma separated file reporting various descriptors of the objects was
-then produced. Three annotated images were also created illustrating the final
-selection of plasmodesmata, the small objects that had been filtered out and
-the large objects that had been filtered out.
+### Summary
 
-The three-dimensional segmentation was carried out using an absolute threshold
-(default 15000). The resulting binary image was then segmented into connected
-components.
+The overall image analysis protocol was to:
+
+1. Segment the confocal images into three-dimensional objects. 
+2. Filter out unusually small and large objects.
+3. Write out a comma separated variable file with descriptors of these objects,
+   as well as annotated images illustrating the final selection of plasmodesmata,
+   and the small/arge objects that had been filtered  out.
+
+### Details
+
+The three-dimensional segmentation was carried out by initially thresholding the
+input image with an absolute threshold (default 15000). The resulting binary 
+image was then segmented by connected component analysis.
 
 The post segmentation filtering was based on the number of voxels in each
 connected component. The small filter removed objects with less than two voxels
-and the large filter removed objects with more than 50 pixels. The small filter
-removed noise and the large filter tended to remove noise from callose
-accumulated in stomata.
+and the large filter removed objects with more than 50 voxels. The small filter
+removed noise and the large filter removed callose accumulated in stomata.
 
 The comma separated file contained one line per object (plasmodesmata). The
 columns in the CSV file were: a unique identifier ("id"), the red-green-blue
 triplet used to represent the object in the annotated image ("rgb"), the number
-of voxels in object ("voxels"), the sum of the intensity values in the object
-("sum"), the minimum intensity value in the object ("min"), the maximum
-intensity value in the object ("max"), the mean intensity of the object
+of voxels in each object ("voxels"), the sum of the intensity values in the 
+object ("sum"), the minimum intensity value in the object ("min"), the maximum
+intensity value in the object ("max") and the mean intensity of the object
 ("mean").
 
 Annotated images were written out as series of PNG files, one file for each
 z-slice. Each annotated image contained the intensity of the z-slice in gray
 scale. On top of the intensity the outline of each object in the z-slice was
-annotated using a pretty colour (also recorded in the comma separated file).
+annotated in colour (also recorded in the comma separated file).
 
 As a sanity check of the image analysis pipeline all annotated images were
 inspected prior to inclusion of any data in the statistical analysis.
