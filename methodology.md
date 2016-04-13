@@ -44,8 +44,9 @@ BioImage framework](https://github.com/JIC-CSB/jicbioimage). The conversion of
 the Leica files made use of BioFormat's bfconvert tool [ref1]. The image
 anslysis made use of several scientific Python packages including numpy [ref2],
 scipy [ref3], and scikit-image [ref4].  The image analysis scripts are
-available under the open source MIT licence on GitHub [make available and
-include ref].
+available under the open source MIT licence on GitHub
+https://github.com/JIC-CSB/find-plasmodesmata
+.
 
 [ref1] http://www.ncbi.nlm.nih.gov/pubmed/20513764
 [ref2] http://ieeexplore.ieee.org/xpl/articleDetails.jsp?arnumber=5725236
