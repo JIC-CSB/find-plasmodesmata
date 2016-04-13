@@ -47,7 +47,7 @@ project from githq and go into it.
 Clone the project from githq and go into it.
 
 ```
-git clone git@githq.nbi.ac.uk:rg-matthew-hartley/find-plasmodesmata.git
+git clone git@github.com:JIC-CSB/find-plasmodesmata.git
 cd find-plasmodesmata
 ```
 
