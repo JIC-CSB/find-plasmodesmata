@@ -1,5 +1,9 @@
 # README
 
+Scripts to identify plasmodesmata in cells.
+
+For information about the algorithm see the [methodology](methodology.md).
+
 ## Installation notes
 
 ## Dependencies
@@ -65,17 +69,23 @@ command prompt.
 activate find_plasmodesmata_env
 ```
 
-To run the analysis on all series in an input microscopy file run the command
-below.
-
-```
-python scripts/analyse_all_series.py /path/to/raw/file/of/interest.lif test
-```
-
 To run the analysis on a specific series in an input microscopy file one can
 use the ``scripts/plasmodesmata_anlaysis.py`` script. The command below
 analyses the first series in the file (zero-indexed).
 
 ```
 python scripts/plasmodesmata_analysis.py /path/to/raw/file/of/interest.lif 0 output_directory
+```
+To run the analysis on all series in an input microscopy file run the command
+below.
+
+```
+python scripts/analyse_all_series.py /path/to/raw/file/of/interest.lif output_directory
+```
+
+To run the analysis on lots of microscopy files in a directory one can use
+the ``scripts/analyse_all_images.py`` script.
+
+```
+python scripts/analyse_all_images.py /path/to/input_dir output_directory
 ```
