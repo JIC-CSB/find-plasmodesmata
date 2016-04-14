@@ -24,7 +24,7 @@ from jicbioimage.segment import SegmentedImage, connected_components
 from jicbioimage.illustrate import AnnotatedImage
 
 
-__version__ = "0.7.0"
+__version__ = "0.7.1"
 
 AutoWrite.on = False
 HERE = os.path.dirname(os.path.realpath(__file__))

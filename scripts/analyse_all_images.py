@@ -18,6 +18,7 @@ ch = logging.StreamHandler()
 ch.setLevel(logging.DEBUG)
 logger.addHandler(ch)
 
+
 def analyse_dir(args):
     """Analyse all images in an input directory."""
     for fname in os.listdir(args.input_dir):
@@ -30,8 +31,13 @@ def analyse_dir(args):
             return ".".join(no_suffix_list)
         dir_name = get_dir_name(fname)
         specific_out_dir = os.path.join(args.output_dir, dir_name)
-        if not os.path.isdir(specific_out_dir):
-            os.mkdir(specific_out_dir)
+
+        # Skip analysis of image if output directory exists.
+        if os.path.isdir(specific_out_dir):
+            logger.info("Directory exists: {}".format(specific_out_dir))
+            logger.info("Skipping: {}".format(fname))
+            continue
+        os.mkdir(specific_out_dir)
 
         fpath = os.path.join(args.input_dir, fname)
         microscopy_collection = get_microscopy_collection(fpath)
