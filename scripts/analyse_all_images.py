@@ -70,6 +70,9 @@ def main():
     logger.addHandler(fh)
 
     logger.info("Script version: {}".format(__version__))
+    logger.info("Threshold: {}".format(args.threshold))
+    logger.info("Min voxel: {}".format(args.min_voxel))
+    logger.info("Max voxel: {}".format(args.max_voxel))
 
     analyse_dir(args)
 
